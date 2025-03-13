@@ -1,13 +1,44 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Gravity : MonoBehaviour
 {
     Rigidbody rb;
-    const float G = 0.00674f;
+    const float G = 0.006674f;
+    public static List<Gravity> gravityObjectList;
+
+    //orbit
+    [SerializeField]bool planets = false;
+    [SerializeField]int orbitSpeed = 1000;
     
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        if (gravityObjectList == null)
+        {
+        gravityObjectList = new List<Gravity>();
+        }
+
+        gravityObjectList.Add(this);
+
+        //orbit
+        if(!planets)
+        {
+            rb.AddForce(Vector3.left * orbitSpeed);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        foreach (var obj in  gravityObjectList)
+        {
+           if (obj != this)
+           {
+            Attract(obj);
+           }
+        }
+
+        //Attract
     }
    void Attract(Gravity other)
    {
